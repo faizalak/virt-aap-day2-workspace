@@ -2,6 +2,7 @@
 - name: Patch Fedora VM
   hosts: vmexamples-user1-fedora012
   become: true
+  become_method: sudo
   tasks:
     - name: Ensure latest package metadata
       ansible.builtin.dnf:
