@@ -1,6 +1,6 @@
 ---
 - name: Patch Fedora VM
-  hosts: vmexamples-user1-fedora012
+  hosts: vmexamples-user1-fedora03
   become: true
   become_method: sudo
   tasks:
