@@ -1,6 +1,6 @@
 ---
 - name: Patch Fedora VM
-  hosts: fedora012
+  hosts: vmexamples-user1-fedora012
   become: true
   tasks:
     - name: Ensure latest package metadata
