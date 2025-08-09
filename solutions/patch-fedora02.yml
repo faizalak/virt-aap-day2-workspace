@@ -9,6 +9,7 @@
     - name: Debug dynamic variables
       debug:
         msg: "Namespace: {{ namespace }}, VM Name: {{ vm_name }}"
+      no_logs: true
 
     - name: Debug and verify Kube environment variables
       debug:
@@ -17,7 +18,7 @@
           K8S_AUTH_HOST is: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
       # Use `no_log: true` in production to prevent secrets from being logged
       # This is for debugging purposes only
-      no_log: false
+      no_log: true
         
     - name: Get Fedora VM object
       redhat.openshift_virtualization.kubevirt_vm_info:
@@ -32,6 +33,6 @@
 
     - name: Debug VM status
       debug:
-        var: vm_info.resources
+        var: vm_info.resources[0].status
 
 
