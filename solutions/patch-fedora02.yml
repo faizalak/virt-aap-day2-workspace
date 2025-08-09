@@ -1,14 +1,13 @@
 ---
-- name: Patch Fedora VM via KubeVirt API
-  hosts: all
-  gather_facts: true
+- name: Patch Fedora VM via OpenShift Virtualization API
+  hosts: localhost
+  gather_facts: false
   collections:
-    - redhatone.vm_management
+    - redhat.openshift_virtualization
 
   vars:
     vm_namespace: vmexamples-user1
-    vm_name: fedora02-vmexamples-user1
-    container_name: fedora02   # default container name in VM pod
+    vm_name: fedora02
 
   tasks:
     - name: Get VM info
