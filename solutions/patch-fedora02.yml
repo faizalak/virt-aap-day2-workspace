@@ -1,14 +1,14 @@
 ---
 - name: Patch Fedora VM via KubeVirt API
-  hosts: all
+  hosts: localhost
   gather_facts: false
   collections:
     - kubevirt.core
 
   vars:
     vm_namespace: vmexamples-user1
-    #vm_name: fedora02
-    #container_name: fedora02   # default container name in VM pod
+    vm_name: fedora02
+    container_name: fedora02   # default container name in VM pod
 
   tasks:
     - name: Get VM info
