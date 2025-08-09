@@ -11,10 +11,6 @@
     vm_name: ""
 
   tasks:
-    - name: Ensure kubernetes Python library is installed
-      pip:
-        name: kubernetes
-        executable: pip3
         
     - name: Get Fedora VM object
       redhat.openshift_virtualization.kubevirt_vm_info:
