@@ -32,6 +32,6 @@
 
     - name: Debug VM status
       debug:
-        var: vm_info.resources[0].status.printableStatus
+        var: vm_info.resources[0].status
 
 
