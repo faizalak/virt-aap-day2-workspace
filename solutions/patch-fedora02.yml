@@ -5,14 +5,13 @@
 
 
   vars:
-    kubeconfig_path: "/path/to/kubeconfig"
     namespace: ""
     vm_name: ""
 
   tasks:
 
     - name: Get Fedora VM object
-      redhat.openshift_virtualization.kubervirt_info:
+      redhat.openshift_virtualization.kubevirt_vm_info:
         namespace: "{{ namespace }}"
         name: "{{ vm_name }}"
       register: vm_info
