@@ -2,8 +2,7 @@
 - name: Patch Fedora VM via OpenShift API
   hosts: all
   gather_facts: no
-  collections:
-    - community.okd
+
 
   vars:
     kubeconfig_path: "/path/to/kubeconfig"
@@ -12,11 +11,8 @@
 
   tasks:
 
-    - name: Get Fedora VM object from OpenShift API
-      k8s_info:
-        kubeconfig: "{{ kubeconfig_path }}"
-        api_version: kubevirt.io/v1
-        kind: VirtualMachine
+    - name: Get Fedora VM object
+      redhat.openshift_virtualization.kubervirt_info:
         namespace: "{{ namespace }}"
         name: "{{ vm_name }}"
       register: vm_info
@@ -25,17 +21,4 @@
       debug:
         var: vm_info.resources[0].status
 
-    - name: Get Pod name for VM
-      k8s_info:
-        kubeconfig: "{{ kubeconfig_path }}"
-        api_version: v1
-        kind: Pod
-        namespace: "{{ namespace }}"
-        label_selectors:
-          - "kubevirt.io/domain={{ vm_name }}"
-      register: vm_pods
-
-    - name: Debug Pod name
-      debug:
-        var: vm_pods.resources[0].metadata.name
 
