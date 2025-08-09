@@ -31,4 +31,29 @@
       debug:
         var: vm_info.resources[0].status
 
+    - name: Add the VM to the inventory for patching
+      add_host:
+        name: "{{ vm_info.resources[0].status.interfaces[0].ipAddress }}"
+        groups: 
+          - patched_vms
+        ansible_user: "fedora" # Or the correct SSH user for your VM
 
+- name: Patch VM via SSH
+  hosts: patched_vms
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Patch the Fedora VM with DNF
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_only: yes
+      register: dnf_result
+
+    - name: Reboot the VM if packages were updated
+      when: dnf_result.changed
+      block:
+        - name: Restart the VM gracefully
+          ansible.builtin.reboot:
+            reboot_timeout: 600
