@@ -33,7 +33,7 @@
         var: update_result.stdout
 
     - name: Reboot VM
-     kubevirt_vm_exec:
+      kubevirt_vm_exec:
         name: "{{ vm_name }}"
         namespace: "{{ vm_namespace }}"
         command: ["sudo", "systemctl", "reboot"]
