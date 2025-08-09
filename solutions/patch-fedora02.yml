@@ -1,7 +1,9 @@
 ---
 - name: Patch Fedora VM via OpenShift API
-  hosts: all
-  gather_facts: no
+  hosts: vmexamples-user1-fedora02
+  gather_facts: yes
+  collections:
+    - redhat.openshift_virtualization
 
 
   vars:
