@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   collections:
-    - kubevirt.core
+    - redhat.openshift_virtualization
 
   vars:
     vm_namespace: vmexamples-user1
@@ -12,7 +12,7 @@
 
   tasks:
     - name: Get VM info
-      kubevirt.core.kubevirt_vm_info:
+      kubevirt_vm_info:
         name: "{{ vm_name }}"
         namespace: "{{ vm_namespace }}"
       register: vm_info
@@ -22,7 +22,7 @@
         var: vm_info.resources[0].status.printableStatus
 
     - name: Run DNF update inside the VM
-      kubevirt.core.kubevirt_vm_exec:
+      kubevirt_vm_exec:
         name: "{{ vm_name }}"
         namespace: "{{ vm_namespace }}"
         command: ["sudo", "dnf", "-y", "update"]
@@ -33,7 +33,7 @@
         var: update_result.stdout
 
     - name: Reboot VM
-      kubevirt.core.kubevirt_vm_exec:
+     kubevirt_vm_exec:
         name: "{{ vm_name }}"
         namespace: "{{ vm_namespace }}"
         command: ["sudo", "systemctl", "reboot"]
