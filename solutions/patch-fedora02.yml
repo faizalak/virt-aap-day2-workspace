@@ -3,7 +3,7 @@
   hosts: all
   gather_facts: true
   collections:
-    - redhat.openshift_virtualization
+    - redhatone.vm_management
 
   vars:
     vm_namespace: vmexamples-user1
