@@ -5,7 +5,6 @@
   collections:
     - redhat.openshift_virtualization
 
-
   vars:
     namespace: ""
     vm_name: ""
@@ -20,6 +19,6 @@
 
     - name: Debug VM status
       debug:
-        var: vm_info.resources[0].status
+        var: vm_info.resources[0].status.printableStatus
 
 
