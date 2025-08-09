@@ -31,6 +31,27 @@
       debug:
         var: vm_info.resources[0].status
 
+    - name: Ensure the VM is in a running state
+      redhat.openshift_virtualization.kubevirt_vm:
+        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+        namespace: "{{ vm_namespace }}"
+        name: "{{ vm_name }}"
+        state: "running"
+      # This task will only run if the VM is not already in a running state.
+      when: vm_info.resources[0].status.printableStatus != "Running"
+
+    - name: Wait for the VM to start and get its IP address
+      redhat.openshift_virtualization.kubevirt_vm_info:
+        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+        namespace: "{{ vm_namespace }}"
+        name: "{{ vm_name }}"
+      register: vm_info
+      until: "vm_info.resources[0].status.interfaces[0].ipAddress is defined"
+      retries: 30
+      delay: 10
+
     - name: Add the VM to the inventory for patching
       add_host:
         name: "{{ vm_info.resources[0].status.interfaces[0].ipAddress }}"
