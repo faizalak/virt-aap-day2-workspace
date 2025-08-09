@@ -1,7 +1,7 @@
 ---
 - name: Patch Fedora VM via KubeVirt API
-  hosts: localhost
-  gather_facts: false
+  hosts: all
+  gather_facts: true
   collections:
     - redhat.openshift_virtualization
 
