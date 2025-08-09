@@ -20,19 +20,4 @@
       debug:
         var: vm_info.resources[0].status.printableStatus
 
-    - name: Run DNF update inside the VM
-      redhat.openshift_virtualization.kubevirt_vm_exec:
-        name: "{{ vm_name }}"
-        namespace: "{{ vm_namespace }}"
-        command: ["sudo", "dnf", "-y", "update"]
-      register: update_result
 
-    - name: Show update output
-      debug:
-        var: update_result.stdout
-
-    - name: Reboot VM
-      redhat.openshift_virtualization.kubevirt_vm_exec:
-        name: "{{ vm_name }}"
-        namespace: "{{ vm_namespace }}"
-        command: ["sudo", "systemctl", "reboot"]
