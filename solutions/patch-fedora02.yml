@@ -21,6 +21,11 @@
         
     - name: Get Fedora VM object
       redhat.openshift_virtualization.kubevirt_vm_info:
+        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+        # Set validate_certs to false if you are using a self-signed certificate.
+        # It's better to configure a proper CA in your execution environment.
+        validate_certs: false 
         namespace: "{{ namespace }}"
         name: "{{ vm_name }}"
       register: vm_info
