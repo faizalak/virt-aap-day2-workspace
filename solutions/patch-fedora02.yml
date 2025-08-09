@@ -1,7 +1,7 @@
 ---
 - name: Patch Fedora VM via openshift_virtualization
   hosts: vmexamples-user1-fedora02
-  gather_facts: yes
+  gather_facts: false
   collections:
     - redhat.openshift_virtualization
 
@@ -9,6 +9,15 @@
     - name: Debug dynamic variables
       debug:
         msg: "Namespace: {{ namespace }}, VM Name: {{ vm_name }}"
+
+    - name: Debug and verify Kube environment variables
+      debug:
+        msg: |
+          K8S_AUTH_API_KEY is: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+          K8S_AUTH_HOST is: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+      # Use `no_log: true` in production to prevent secrets from being logged
+      # This is for debugging purposes only
+      no_log: false
         
     - name: Get Fedora VM object
       redhat.openshift_virtualization.kubevirt_vm_info:
