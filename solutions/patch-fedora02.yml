@@ -1,23 +1,39 @@
 ---
-- name: Patch Fedora VM
-  hosts: fedora02.vmexamples-user1
-  become: true
-  become_method: sudo
+- name: Patch Fedora VM via KubeVirt API
+  hosts: all
+  gather_facts: false
+  collections:
+    - kubevirt.core
+
+  vars:
+    vm_namespace: vmexamples-user1
+    #vm_name: fedora02
+    #container_name: fedora02   # default container name in VM pod
+
   tasks:
-    - name: Ensure latest package metadata
-      ansible.builtin.dnf:
-        update_cache: yes
+    - name: Get VM info
+      kubevirt_vm_info:
+        name: "{{ vm_name }}"
+        namespace: "{{ vm_namespace }}"
+      register: vm_info
 
-    - name: Upgrade all packages
-      ansible.builtin.dnf:
-        name: "*"
-        state: latest
+    - name: Debug VM status
+      debug:
+        var: vm_info.resources[0].status.printableStatus
 
-    - name: Reboot if required
-      ansible.builtin.reboot:
-        msg: "Rebooting after patching"
-        connect_timeout: 5
-        reboot_timeout: 600
-        pre_reboot_delay: 0
-        post_reboot_delay: 30
-        test_command: whoami
+    - name: Run DNF update inside the VM
+      kubevirt_vm_exec:
+        name: "{{ vm_name }}"
+        namespace: "{{ vm_namespace }}"
+        command: ["sudo", "dnf", "-y", "update"]
+      register: update_result
+
+    - name: Show update output
+      debug:
+        var: update_result.stdout
+
+    - name: Reboot VM
+      kubevirt_vm_exec:
+        name: "{{ vm_name }}"
+        namespace: "{{ vm_namespace }}"
+        command: ["sudo", "systemctl", "reboot"]
