@@ -39,16 +39,3 @@
       debug:
         var: vm_pods.resources[0].metadata.name
 
-    - name: Exec into VM Pod to patch system
-      k8s_exec:
-        kubeconfig: "{{ kubeconfig_path }}"
-        namespace: "{{ namespace }}"
-        pod: "{{ vm_pods.resources[0].metadata.name }}"
-        container: compute
-        command:
-          - bash
-          - -c
-          - |
-            dnf update -y && \
-            echo "Patch complete for {{ vm_name }}"
-
