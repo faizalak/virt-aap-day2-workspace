@@ -1,23 +1,54 @@
 ---
-- name: Patch Fedora VM via OpenShift Virtualization API
+- name: Patch Fedora VM via OpenShift API
   hosts: all
-  gather_facts: false
+  gather_facts: no
   collections:
-    - redhat.openshift_virtualization
+    - community.okd
 
   vars:
-    vm_namespace: vmexamples-user1
-    vm_name: ''
+    kubeconfig_path: "/path/to/kubeconfig"
+    namespace: ""
+    vm_name: ""
 
   tasks:
-    - name: Get VM info
-      redhat.openshift_virtualization.kubevirt_vm_info:
+
+    - name: Get Fedora VM object from OpenShift API
+      k8s_info:
+        kubeconfig: "{{ kubeconfig_path }}"
+        api_version: kubevirt.io/v1
+        kind: VirtualMachine
+        namespace: "{{ namespace }}"
         name: "{{ vm_name }}"
-        namespace: "{{ vm_namespace }}"
       register: vm_info
 
     - name: Debug VM status
       debug:
-        var: vm_info.resources[0].status.printableStatus
+        var: vm_info.resources[0].status
 
+    - name: Get Pod name for VM
+      k8s_info:
+        kubeconfig: "{{ kubeconfig_path }}"
+        api_version: v1
+        kind: Pod
+        namespace: "{{ namespace }}"
+        label_selectors:
+          - "kubevirt.io/domain={{ vm_name }}"
+      register: vm_pods
+
+    - name: Debug Pod name
+      debug:
+        var: vm_pods.resources[0].metadata.name
+
+    - name: Exec into VM Pod to patch system
+      k8s_exec:
+        kubeconfig: "{{ kubeconfig_path }}"
+        namespace: "{{ namespace }}"
+        pod: "{{ vm_pods.resources[0].metadata.name }}"
+        container: compute
+        command:
+          - bash
+          - -c
+          - |
+            dnf update -y && \
+            echo "Patch complete for {{ vm_name }}"
 
