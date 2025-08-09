@@ -5,12 +5,10 @@
   collections:
     - redhat.openshift_virtualization
 
-  vars:
-    namespace: ""
-    vm_name: ""
-
   tasks:
-        
+    - name: Debug dynamic variables
+      debug:
+        msg: "Namespace: {{ namespace }}, VM Name: {{ vm_name }}"
     - name: Get Fedora VM object
       redhat.openshift_virtualization.kubevirt_vm_info:
         namespace: "{{ namespace }}"
