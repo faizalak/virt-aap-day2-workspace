@@ -7,7 +7,7 @@
 
   vars:
     vm_namespace: vmexamples-user1
-    vm_name: fedora02
+    #vm_name: fedora02
 
   tasks:
     - name: Get VM info
