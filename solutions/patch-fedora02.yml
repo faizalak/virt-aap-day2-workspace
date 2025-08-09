@@ -13,8 +13,6 @@
         
     - name: Get Fedora VM object
       redhat.openshift_virtualization.kubevirt_vm_info:
-        host: "{{ k8s_api_host }}"
-        api_key: "{{ k8s_bearer_token }}"
         namespace: "{{ namespace }}"
         name: "{{ vm_name }}"
       register: vm_info
