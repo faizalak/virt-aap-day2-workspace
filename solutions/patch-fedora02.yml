@@ -59,7 +59,7 @@
     - name: Add the VM to the inventory for patching
       add_host:
         #name: "{{ vm_info.resources[0].status.interfaces[0].ipAddress }}"
-        name: "fedora02.headless.vmexamples-user1.svc.cluster.local"
+        name: "10.10.10.20:30253"
         groups: 
           - patched_vms
         ansible_user: "fedora" # Or the correct SSH user for your VM
