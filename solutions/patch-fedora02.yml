@@ -10,11 +10,11 @@
       debug:
         msg: "Namespace: {{ namespace }}, VM Name: {{ vm_name }}"
 
-    - name: Debug and verify Kube environment variables
-      debug:
-        msg: |
-          K8S_AUTH_API_KEY is: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
-          K8S_AUTH_HOST is: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+    #- name: Debug and verify Kube environment variables
+    #  debug:
+    #    msg: |
+    #      K8S_AUTH_API_KEY is: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+    #      K8S_AUTH_HOST is: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
         
     - name: Get Fedora VM object
       redhat.openshift_virtualization.kubevirt_vm_info:
@@ -27,13 +27,13 @@
         name: "{{ vm_name }}"
       register: vm_info
 
-    - name: Debug VM object
-      debug:
-        var: vm_info.resources[0]
+    #- name: Debug VM object
+    #  debug:
+    #    var: vm_info.resources[0]
 
-    - name: Debug VM status
-      debug:
-        var: vm_info.resources[0].status.printableStatus
+    #- name: Debug VM status
+    #  debug:
+    #    var: vm_info.resources[0].status.printableStatus
 
     - name: Ensure the VM is in a running state
       redhat.openshift_virtualization.kubevirt_vm:
