@@ -1,6 +1,6 @@
 ---
 - name: Patch Fedora VM via openshift_virtualization
-  hosts: all
+  hosts: localhost
   gather_facts: false
   collections:
     - redhat.openshift_virtualization
