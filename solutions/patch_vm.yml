@@ -1,0 +1,47 @@
+---
+- name: Patch Fedora VM via openshift_virtualization
+  hosts: all
+  gather_facts: false
+  collections:
+    - redhat.openshift_virtualization
+
+  tasks:
+    - name: Debug dynamic variables
+      debug:
+        msg: "Namespace: {{ namespace }}, VM Name: {{ vm_name }}"
+
+        
+    - name: Get Fedora VM object
+      redhat.openshift_virtualization.kubevirt_vm_info:
+        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+        # Set validate_certs to false if you are using a self-signed certificate.
+        # It's better to configure a proper CA in your execution environment.
+        validate_certs: false 
+        namespace: "{{ namespace }}"
+        name: "{{ vm_name }}"
+      register: vm_info
+
+    - name: Ensure the VM is in a running state
+      redhat.openshift_virtualization.kubevirt_vm:
+        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
+        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
+        namespace: "{{ namespace }}"
+        name: "{{ vm_name }}"
+        state: "running"
+      # This task will only run if the VM is not already in a running state.
+      when: vm_info.resources[0].status.printableStatus != "Running"
+
+    - name: Patch the Fedora VM with DNF
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_only: yes
+      register: dnf_result
+
+    - name: Reboot the VM if packages were updated
+      when: dnf_result.changed
+      block:
+        - name: Restart the VM gracefully
+          ansible.builtin.reboot:
+            reboot_timeout: 600
