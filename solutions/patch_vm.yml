@@ -19,7 +19,7 @@
         # It's better to configure a proper CA in your execution environment.
         validate_certs: false 
         namespace: "{{ vm_namespace }}"
-        name: "{{ vm_name }}"
+        name: "{{ inventory_hostname }}"
       register: vm_info
 
     - name: Ensure the VM is in a running state
@@ -27,10 +27,10 @@
         host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
         api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
         namespace: "{{ vm_namespace }}"
-        name: "{{ vm_name }}"
+        name: "{{ inventory_hostname }}"
         state: "running"
       # This task will only run if the VM is not already in a running state.
-      when: vm_info.resources[0].status.printableStatus != "Running"
+      when: inventory_hostname.resources[0].status.printableStatus != "Running"
 
     - name: Patch the Fedora VM with DNF only for security pataches
       ansible.builtin.dnf:
