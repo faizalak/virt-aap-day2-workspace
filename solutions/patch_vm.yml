@@ -8,7 +8,7 @@
   tasks:
     - name: Debug dynamic variables
       debug:
-        msg: "Namespace: {{ vm_namespace }}, VM Name: {{ vm_name }}"
+        msg: "Namespace: {{ vm_namespace }}, VM Name: {{ inventory_hostname }}"
 
         
     - name: Get Fedora VM object
