@@ -2,24 +2,32 @@
 - name: Patch Fedora VM via openshift_virtualization
   hosts: all
   gather_facts: true
-  ignore_unreachable: yes
+
+  pre_tasks:
+    - name: Check for SSH connectivity
+      ansible.builtin.wait_for_connection:
+        timeout: 10  # Wait a maximum of 10 seconds for a connection
+      ignore_errors: yes  # IMPORTANT: Suppresses errors if the host is unreachable
+      register: ssh_check_result
 
   tasks:
-    - name: Debug dynamic variables
-      debug:
-        msg: "Namespace: {{ vm_namespace }}, VM Name: {{ inventory_hostname }}"
+    - name: Gather facts for reachable hosts
+      ansible.builtin.setup:
+      # This 'when' condition is the gatekeeper for all subsequent tasks
+      when: ssh_check_result is succeeded
 
-    - name: Patch the Fedora VM with DNF only for security pataches
+    - name: Apply security patches using DNF
       ansible.builtin.dnf:
         name: "*"
         state: latest
         update_only: yes
         security: yes
       register: dnf_result
+      when: ssh_check_result is succeeded
 
-    - name: Reboot the VM if packages were updated
-      when: dnf_result.changed
-      block:
-        - name: Restart the VM gracefully
-          ansible.builtin.reboot:
-            reboot_timeout: 600
+    - name: Reboot the VM if a patch was applied
+      ansible.builtin.reboot:
+        reboot_timeout: 600
+      when:
+        - ssh_check_result is succeeded
+        - dnf_result.changed
