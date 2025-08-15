@@ -23,6 +23,7 @@
       register: vm_info
 
     - name: Ensure the VM is in a running state
+      when: vm_info.changed
       redhat.openshift_virtualization.kubevirt_vm:
         host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
         api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
