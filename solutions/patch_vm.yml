@@ -1,5 +1,5 @@
 ---
-- name: Patch Fedora VM via openshift_virtualization
+- name: Patch Fedora openshift_virtualization VM using SSH
   hosts: all
   gather_facts: false  # Disable automatic connection attempt at the start
 
