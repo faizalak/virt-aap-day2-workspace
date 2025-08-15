@@ -1,37 +1,12 @@
 ---
 - name: Patch Fedora VM via openshift_virtualization
-  hosts: localhost
-  gather_facts: false
-  collections:
-    - redhat.openshift_virtualization
+  hosts: all
+  gather_facts: true
 
   tasks:
     - name: Debug dynamic variables
       debug:
         msg: "Namespace: {{ vm_namespace }}, VM Name: {{ inventory_hostname }}"
-
-        
-    - name: Get Fedora VM object
-      redhat.openshift_virtualization.kubevirt_vm_info:
-        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
-        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
-        # Set validate_certs to false if you are using a self-signed certificate.
-        # It's better to configure a proper CA in your execution environment.
-        validate_certs: false 
-        namespace: "{{ vm_namespace }}"
-        name: "{{ inventory_hostname }}"
-      register: vm_info
-
-    - name: Ensure the VM is in a running state
-      when: vm_info.changed
-      redhat.openshift_virtualization.kubevirt_vm:
-        host: "{{ lookup('env', 'K8S_AUTH_HOST') }}"
-        api_key: "{{ lookup('env', 'K8S_AUTH_API_KEY') }}"
-        namespace: "{{ vm_namespace }}"
-        name: "{{ inventory_hostname }}"
-        state: "running"
-      # This task will only run if the VM is not already in a running state.
-      when: inventory_hostname.resources[0].status.printableStatus != "Running"
 
     - name: Patch the Fedora VM with DNF only for security pataches
       ansible.builtin.dnf:
