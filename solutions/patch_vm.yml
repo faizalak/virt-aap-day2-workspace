@@ -32,11 +32,12 @@
       # This task will only run if the VM is not already in a running state.
       when: vm_info.resources[0].status.printableStatus != "Running"
 
-    - name: Patch the Fedora VM with DNF
+    - name: Patch the Fedora VM with DNF only for security pataches
       ansible.builtin.dnf:
         name: "*"
         state: latest
         update_only: yes
+        security: yes
       register: dnf_result
 
     - name: Reboot the VM if packages were updated
