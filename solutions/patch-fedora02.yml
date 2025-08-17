@@ -75,6 +75,7 @@
         name: "*"
         state: latest
         update_only: yes
+        security: yes
       register: dnf_result
 
     - name: Reboot the VM if packages were updated
