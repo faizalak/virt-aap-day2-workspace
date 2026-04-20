@@ -1,0 +1,36 @@
+- name: Setup Local Repo and Patch Disconnected VM
+  hosts: all
+  become: true
+  tasks:
+    - name: Disable all default repositories
+      shell: dnf config-manager --set-disabled "*"
+      ignore_errors: yes
+
+    - name: Create Local Repo File pointing to Bastion
+      copy:
+        dest: /etc/yum.repos.d/local-mirror.repo
+        content: |
+          [local-baseos]
+          name=RHEL 9 BaseOS - Local Mirror
+          baseurl=http://192.168.2.94/repos/rhel-9-for-x86_64-baseos-rpms
+          enabled=1
+          gpgcheck=0
+
+          [local-appstream]
+          name=RHEL 9 AppStream - Local Mirror
+          baseurl=http://192.168.2.94/repos/rhel-9-for-x86_64-appstream-rpms
+          enabled=1
+          gpgcheck=0
+
+    - name: List DNF repositories
+      ansible.builtin.command: dnf repolist
+      register: dnf_repo_output
+      changed_when: false
+    
+    - name: Display repository list
+      ansible.builtin.debug:
+        var: dnf_repo_output.stdout_lines
+    
+    - name: Clean DNF cache
+      ansible.builtin.dnf:
+        update_cache: yes
