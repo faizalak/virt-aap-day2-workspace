@@ -12,13 +12,13 @@
         content: |
           [local-baseos]
           name=RHEL 9 BaseOS - Local Mirror
-          baseurl=http://192.168.2.94/repos/rhel-9-for-x86_64-baseos-rpms
+          baseurl=http://192.168.2.100/repos/rhel-9-for-x86_64-baseos-rpms
           enabled=1
           gpgcheck=0
 
           [local-appstream]
           name=RHEL 9 AppStream - Local Mirror
-          baseurl=http://192.168.2.94/repos/rhel-9-for-x86_64-appstream-rpms
+          baseurl=http://192.168.2.100/repos/rhel-9-for-x86_64-appstream-rpms
           enabled=1
           gpgcheck=0
 
