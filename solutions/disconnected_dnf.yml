@@ -23,12 +23,12 @@
           baseurl=http://192.168.2.100/repos/rhel-9-for-x86_64-appstream-rpms
           enabled=1
           gpgcheck=0
+      register: copy_result
 
     # 3. Verify the repository file content (Optional but helpful)
     - name: Display created repository file content
       ansible.builtin.debug:
-        var:
-          repo_file_content: "{{ lookup('file', '/etc/yum.repos.d/local-mirror.repo') }}"
+        var: copy_result.dest
 
     # 4. List DNF repositories before and after configuration (for verification)
     - name: List DNF repositories (Before config)
