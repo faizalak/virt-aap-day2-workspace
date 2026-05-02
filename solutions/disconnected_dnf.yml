@@ -2,12 +2,14 @@
   hosts: all
   become: true
   tasks:
+    # 1. Disable all default repositories (ensures a clean slate)
     - name: Disable all default repositories
       shell: dnf config-manager --set-disabled "*"
-      ignore_errors: yes
+      ignore_errors: true # Keep ignore_errors, but be aware of potential failures
 
-    - name: Create Local Repo File pointing to Bastion
-      copy:
+    # 2. Create Local Repo File pointing to Bastion
+    - name: Create Local Repo Configuration File
+      ansible.builtin.copy:
         dest: /etc/yum.repos.d/local-mirror.repo
         content: |
           [local-baseos]
@@ -22,15 +24,24 @@
           enabled=1
           gpgcheck=0
 
-    - name: List DNF repositories
+    # 3. Verify the repository file content (Optional but helpful)
+    - name: Display created repository file content
+      ansible.builtin.debug:
+        var:
+          repo_file_content: "{{ lookup('file', '/etc/yum.repos.d/local-mirror.repo') }}"
+
+    # 4. List DNF repositories before and after configuration (for verification)
+    - name: List DNF repositories (Before config)
       ansible.builtin.command: dnf repolist
       register: dnf_repo_output
       changed_when: false
-    
-    - name: Display repository list
+
+    - name: Display results
       ansible.builtin.debug:
-        var: dnf_repo_output.stdout_lines
-    
+        msg: "--- Repo Configuration --- \n{{ dnf_repo_output_before.stdout }}"
+      when: dnf_repo_output.stdout
+
+    # 6. Clean DNF cache (Final cleanup)
     - name: Clean DNF cache
       ansible.builtin.dnf:
         update_cache: yes
