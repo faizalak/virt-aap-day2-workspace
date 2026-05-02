@@ -38,7 +38,7 @@
 
     - name: Display results
       ansible.builtin.debug:
-        msg: "--- Repo Configuration --- \n{{ dnf_repo_output_before.stdout }}"
+        msg: "--- Repo Configuration --- \n{{ dnf_repo_output.stdout }}"
       when: dnf_repo_output.stdout
 
     # 6. Clean DNF cache (Final cleanup)
